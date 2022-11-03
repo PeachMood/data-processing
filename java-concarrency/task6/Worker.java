@@ -1,4 +1,4 @@
-package Task6;
+package task6;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;

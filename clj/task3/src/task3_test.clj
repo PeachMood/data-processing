@@ -12,5 +12,5 @@
   (is (= (filter even? (range 1000)) (pfilter even? (range 1000)))))
 
 (deftest pfilter-time-test
-  (time (doall (take 100 (pfilter heavy-even? (range 100)))))
-  (time (doall (take 100 (filter heavy-even? (range 100))))))
+  (time (doall (take 100 (filter even? (iterate inc 0)))))
+  (time (doall (take 100 (pfilter even? (iterate inc 0))))))

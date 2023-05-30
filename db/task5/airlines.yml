@@ -1,0 +1,243 @@
+openapi: 3.0.3
+info:
+  title: Airlines API specification
+  description: Specification of the service API for providing air travel services
+  version: 1.0.0
+servers:
+  - url: https://localhost:8080/api
+    description: Main (production) server
+
+tags:
+  - name: cities
+    description: Information about cities
+  - name: airports
+    description: Information about airports
+
+paths:
+  /cities:
+    get:
+      tags:
+        - cities
+      summary: Returns array of available cities
+      parameters:
+        - name: limit
+          in: query
+          description: Number of cities to return
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+            maximum: 100
+        - name: page
+          in: query
+          description: Page with cities to return
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CityArray"
+              example:
+                [Moscow, Ulyanovsk, Ekaterinburg, Novosibirsk, Blagoveshchensk]
+        "400":
+          description: Incorrect parameters passed in the request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: "Incorrect parameter: limit must be less than 100"
+        "5XX":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: Internal server Error
+
+  /cities/{cityName}/airports:
+    get:
+      tags:
+        - cities
+      summary: Returns array of airports within the specified city
+      parameters:
+        - name: cityName
+          in: path
+          required: true
+          description: Name of the city to return airports for
+          schema:
+            type: string
+            example: Moscow
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirportArray"
+              example:
+                [
+                  {
+                    name: Domodedovo,
+                    city: Moscow,
+                    longitude: 37.906111,
+                    latitude: 55.408611,
+                    timezone: Europe/Moscow,
+                  },
+                  {
+                    name: Sheremetyevo,
+                    city: Moscow,
+                    longitude: 37.414589,
+                    latitude: 55.972642,
+                    timezone: Europe/Samara,
+                  },
+                ]
+        "400":
+          description: Incorrect parameters passed in the request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: "Incorrect parameter: cityName must be a string"
+
+  /airports:
+    get:
+      tags:
+        - airports
+      summary: Returns array of available airports
+      parameters:
+        - name: limit
+          in: query
+          description: Number of airports to return
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+            maximum: 100
+        - name: page
+          in: query
+          description: Page with airports to return
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirportArray"
+              example:
+                [
+                  {
+                    name: Domodedovo,
+                    city: Moscow,
+                    longitude: 37.906111,
+                    latitude: 55.408611,
+                    timezone: Europe/Moscow,
+                  },
+                  {
+                    name: Baratayevka,
+                    city: Ulyanovsk,
+                    longitude: 48.2267,
+                    latitude: 54.268299,
+                    timezone: Europe/Samara,
+                  },
+                ]
+        "400":
+          description: Incorrect parameters passed in the request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: "Incorrect parameter: page must be bigger than 1"
+        "5XX":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                message: Internal server Error
+    /airports/{airport}
+
+components:
+  schemas:
+    City:
+      description: Name of the city
+      type: string
+
+    CityArray:
+      description: Array of cities
+      type: array
+      items:
+        $ref: "#/components/schemas/City"
+
+    Airport:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        city:
+          type: string
+        longitude:
+          type: number
+          format: float
+        latitude:
+          type: number
+          format: float
+        timezone:
+          type: string
+      required:
+        - name
+        - city
+        - longitude
+        - latitude
+        - timezone
+
+    AirportArray:
+      description: Array of cities
+      type: array
+      items:
+        $ref: "#/components/schemas/Airport"
+
+    Schedule:
+      type: object
+      properties:
+        daysOfWeek:
+          type: array
+          items:
+            type: string
+        time:
+          type: string
+          format: date-time
+        flightNo:
+          type: string
+        location:
+          type: string
+      required:
+        - daysOfWeek
+        - time
+        - flightNo
+        - location
+
+    Error:
+      description: Object with an error message
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message

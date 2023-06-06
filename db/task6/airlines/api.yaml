@@ -13,11 +13,9 @@ tags:
   - name: airports
     description: Information about airports
   - name: flights
-    description: Information about flights
+    description: Operations with flights
   - name: bookings
     description: Operations with bookings
-  - name: checkins
-    description: Operations with boarding passes
 
 paths:
   /cities:
@@ -246,6 +244,38 @@ paths:
         5XX:
           $ref: "#/components/responses/InternalServerError"
 
+  /flights/checkins:
+    post:
+      tags:
+        - flights
+      summary: Checks in for the flight
+      requestBody:
+        description: Data for check-in for the flight
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BoardingPass"
+            example:
+              flightNo: PG0226
+              ticketNo: "0005432661914"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BoardingPass"
+              example:
+                boardingNo: 1
+                flightNo: PG0226
+                ticketNo: "0005432661914"
+                seatNo: 1A
+        400:
+          $ref: "#/components/responses/BadRequest"
+        5XX:
+          $ref: "#/components/responses/InternalServerError"
+
   /bookings:
     post:
       tags:
@@ -278,38 +308,6 @@ paths:
                 fareConditions: Economy
                 ticketNo: 0005432661914
                 passengerName: IVAN IVANOV
-        400:
-          $ref: "#/components/responses/BadRequest"
-        5XX:
-          $ref: "#/components/responses/InternalServerError"
-
-  /checkins:
-    post:
-      tags:
-        - checkins
-      summary: Checks in for the flight
-      requestBody:
-        description: Data for check-in for the flight
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BoardingPass"
-            example:
-              flightNo: PG0226
-              ticketNo: "0005432661914"
-      responses:
-        201:
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BoardingPass"
-              example:
-                boardingNo: 1
-                flightNo: PG0226
-                ticketNo: "0005432661914"
-                seatNo: 1A
         400:
           $ref: "#/components/responses/BadRequest"
         5XX:
@@ -476,7 +474,7 @@ components:
         ticketNo:
           type: string
           readOnly: true
-        bookDate:
+        flightDate:
           type: string
           format: date
           pattern: /([0-9]{4})-(?:[0-9]{2})-([0-9]{2})/
@@ -488,12 +486,14 @@ components:
             - Economy
             - Comfort
             - Business
+        passengerId:
+          type: string
         passengerName:
           type: string
       required:
-        - bookDate
+        - flightDate
         - flightNo
-        - seatNo
+        - passengerId
         - passengerName
 
     BoardingPass:
@@ -507,11 +507,11 @@ components:
           readOnly: true
         ticketNo:
           type: string
-        flightNo:
+        flightId:
           type: string
       required:
         - ticketNo
-        - flightNo
+        - flightId
 
     Error:
       type: object

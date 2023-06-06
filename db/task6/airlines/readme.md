@@ -59,5 +59,5 @@ DB_PASSWORD=password
 ```
 
 После найстроки приложение можно запустить в двух режимах:
-* Development: `npm run dev`
-* Production: `npm run start`
+1. Development: `npm run dev`
+2. Production: `npm run start`

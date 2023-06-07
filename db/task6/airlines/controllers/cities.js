@@ -1,3 +1,5 @@
+const { NotFound } = require('http-errors');
+
 const City = require('../models/City');
 const Airport = require('../models/Airport');
 
@@ -15,6 +17,9 @@ const getAirportsByCity = async (req, res, next) => {
   try {
     const { cityName } = req.params;
     const airports = await Airport.getAirportsByCity(cityName);
+    if (airports.length === 0) {
+      throw NotFound('No cities were found for the specified city');
+    }
     res.json(airports);
   } catch (error) {
     next(error);

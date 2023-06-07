@@ -1,3 +1,5 @@
+const { NotFound } = require('http-errors');
+
 const Airport = require('../models/Airport');
 
 const getAirports = async (req, res, next) => {
@@ -15,13 +17,17 @@ const getSchedulesByType = async (req, res, next) => {
     const { airportCode } = req.params;
     const { type } = req.query;
 
+    let schedules;
     if (type === 'inbound') {
-      const schedules = await Airport.getInboundSchedules(airportCode);
-      res.json(schedules);
+      schedules = await Airport.getInboundSchedules(airportCode);
     } else {
-      const schedules = await Airport.getOutboundSchedules(airportCode);
-      res.json(schedules);
+      schedules = await Airport.getOutboundSchedules(airportCode);
     }
+
+    if (schedules.length === 0) {
+      throw NotFound('No schedules were found for the specified airport');
+    }
+    res.json(schedules);
   } catch (error) {
     next(error);
   }

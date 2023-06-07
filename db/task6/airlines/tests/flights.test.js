@@ -2,7 +2,7 @@ const supertest = require('supertest');
 const app = require('../app.js');
 const request = supertest(app);
 
-describe('Testing endpoints for bookings resource', () => {
+describe('Testing endpoints for flights resource', () => {
   it('POST "/flights/checkins" should return created boarding pass with seat number and correct status', async () => {
     const booking = {
       flightNo: 'PG0222',

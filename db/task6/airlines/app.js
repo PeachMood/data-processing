@@ -1,7 +1,5 @@
 const express = require('express');
 
-
-const appConfig = require('./configs/appConfig');
 const requestLogger = require('./middlewares/loggers/requestLogger');
 const errorLogger = require('./middlewares/loggers/errorLogger.js');
 const router = require('./routes');
@@ -15,4 +13,4 @@ app.use(router);
 app.use(errorLogger);
 app.use(errorHandler);
 
-app.listen(appConfig.port);
+module.exports = app;
